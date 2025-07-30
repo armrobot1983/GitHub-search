@@ -1,0 +1,137 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>热门 GitHub 和 OSHWHub 项目</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="[invalid url, do not cite]
+</head>
+<body>
+    <header>
+        <h1>热门 GitHub 和 OSHWHub 项目</h1>
+        <section id="search">
+            <form action="[invalid url, do not cite] method="get">
+                <label for="github-search">在 GitHub 上搜索：</label>
+                <input type="text" id="github-search" name="q" placeholder="输入搜索查询">
+                <button type="submit">搜索</button>
+            </form>
+            <form action="[invalid url, do not cite] method="get">
+                <label for="oshwhub-search">在 OSHWHub 上搜索：</label>
+                <input type="text" id="oshwhub-search" name="q" placeholder="输入搜索查询">
+                <button type="submit">搜索</button>
+            </form>
+        </section>
+    </header>
+    <main>
+        <section id="github-projects">
+            <h2>热门 GitHub 项目</h2>
+            <p id="github-loading">正在加载 GitHub 项目...</p>
+            <ul id="github-list">
+                <!-- 静态后备项目 -->
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('freeCodeCamp', 'freeCodeCamp')">freeCodeCamp</a> - 开源编程学习平台，提供 HTML、CSS、JavaScript 等课程 (424k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('EbookFoundation', 'free-programming-books')">Free Programming Books</a> - 免费编程书籍列表，涵盖多种语言 (364k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('donnemartin', 'system-design-primer')">System Design Primer</a> - 大规模系统设计学习资源 (314k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('facebook', 'react')">React</a> - 用于构建用户界面的 JavaScript 库 (230k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('tensorflow', 'tensorflow')">TensorFlow</a> - 机器学习框架 (182k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('twbs', 'bootstrap')">Bootstrap</a> - 前端框架，简化响应式设计 (167k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('vuejs', 'vue')">Vue.js</a> - 渐进式 JavaScript 框架 (206k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('pytorch', 'pytorch')">PyTorch</a> - 深度学习框架 (80k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('django', 'django')">Django</a> - Python Web 框架 (77k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('kubernetes', 'kubernetes')">Kubernetes</a> - 容器编排系统 (108k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('microsoft', 'vscode')">VS Code</a> - 开源代码编辑器 (160k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('TheAlgorithms', 'Python')">The Algorithms - Python</a> - Python 算法集合 (182k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('public-apis', 'public-apis')">Public APIs</a> - 免费公共 API 列表 (358k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('trekhleb', 'javascript-algorithms')">javascript-algorithms</a> - JavaScript 实现的算法和数据结构 (183k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('ohmyzsh', 'ohmyzsh')">Oh My Zsh</a> - Zsh 配置框架 (172k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('scikit-learn', 'scikit-learn')">scikit-learn</a> - Python 机器学习库 (59k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('keras-team', 'keras')">Keras</a> - 高层次神经网络 API (61k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('nodejs', 'node')">Node.js</a> - JavaScript 运行时环境 (105k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('pallets', 'flask')">Flask</a> - Python 微型 Web 框架 (67k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('docker', 'docker-ce')">Docker</a> - 容器化开发和部署平台 (59k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('kamranahmedse', 'developer-roadmap')">Developer Roadmap</a> - 软件开发学习路径图 (332k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('jwasham', 'coding-interview-university')">Coding Interview University</a> - 编程面试准备资源 (323k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('codecrafters-io', 'build-your-own-x')">build-your-own-x</a> - 构建流行软件的教程 (405k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('getify', 'You-Dont-Know-JS')">You Don’t Know JS</a> - JavaScript 深入学习书籍 (178k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('electron', 'electron')">Electron</a> - 构建跨平台桌面应用的框架 (112k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('rust-lang', 'rust')">Rust</a> - 高性能系统编程语言 (95k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('gatsbyjs', 'gatsby')">Gatsby</a> - 快速静态网站生成器 (55k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('ansible', 'ansible')">Ansible</a> - 自动化部署和配置工具 (62k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('moby', 'moby')">Moby</a> - Docker 的开源核心 (68k stars)</li>
+                <li><a href="#" onclick="event.preventDefault(); showProjectDetails('expressjs', 'express')">Express</a> - Node.js 的快速 Web 框架 (64k stars)</li>
+            </ul>
+        </section>
+        <section id="oshwhub-projects">
+            <h2>OSHWHub 特色项目</h2>
+            <ul>
+                <li><a href="[invalid url, do not cite] target="_blank">【立创·黄山派】SF32LB52开发板</a> - 基于 SF32LB52 的开发板，适合嵌入式开发。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">使用 SF32LB525 制作的智能手表</a> - 智能手表开源项目。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">第七届立创电赛功耗监测仪</a> - 电子设计竞赛中的功耗监测项目。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">超迷你 WCH-Link 调试器</a> - 紧凑型调试工具。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">USB2.0-HUB</a> - 使用 CH334P 芯片的 USB 集线器。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">2.4G 透明传输模块</a> - 基于 CH9141 的蓝牙传输模块。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">CH32V103R8T6 开发板</a> - 基于 RISC-V 内核的开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">ESP32-S3 开发板</a> - 基于 ESP32-S3 的开发板，支持 WiFi 和蓝牙。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">ESP32-C3 开发板</a> - 小型化 RISC-V 开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">ESP32-S3 LCD 开发板</a> - 带 LCD 显示的 ESP32-S3 开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">ESP32 开发板</a> - 支持 WiFi 和蓝牙的开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">Seeeduino XIAO</a> - 小型 Arduino 兼容开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">XIAO RP2040</a> - 基于 RP2040 的微型开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">RP2040-LCD-0.96</a> - 带 0.96 寸 LCD 的 RP2040 开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">Adafruit QT Py</a> - 超小型 SAMD21 开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">Adafruit Metro M0 Express</a> - 基于 ATSAMD21 的开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">CrowPi2</a> - 基于 Raspberry Pi 的教育开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">Seeed XIAO BLE Sense</a> - 支持蓝牙的微型开发板。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">Core51822-B</a> - 基于 nRF51822 的蓝牙模块。</li>
+                <li><a href="[invalid url, do not cite] target="_blank">ELECROW 电源监控器</a> - 竞赛用电源监控设备。</li>
+            </ul>
+        </section>
+    </main>
+    <div id="project-details" style="display: none;">
+        <button id="close-details">关闭</button>
+        <h2 id="project-title"></h2>
+        <div id="project-readme"></div>
+        <a href="" id="project-link" target="_blank">在 GitHub 上查看</a>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
